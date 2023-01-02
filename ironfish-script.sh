@@ -123,7 +123,7 @@ update_ironfish(){
     echo "启动成功！升级完成"
 }
 
-echo && echo -e " ${Red_font_prefix}IronFish 一键安装脚本${Font_color_suffix} by \033[1;35mDaniel | Lattice\033[0m
+echo && echo -e " ${Red_font_prefix}IronFish 一键脚本${Font_color_suffix} by \033[1;35mDaniel | Lattice\033[0m
 此脚本完全免费开源，由推特用户 ${Green_font_prefix}Daniel_eth2${Font_color_suffix} 开发，
 推特用户 ${Green_font_prefix}@L4ttIc3${Font_color_suffix} 二开并升级
 升级增加 ${Red_font_prefix}测试网挖矿,发送转账,创建/设置/导出钱包${Font_color_suffix} 功能
