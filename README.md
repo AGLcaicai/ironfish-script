@@ -1,7 +1,7 @@
 # Iron Fish一键脚本(二开版)
-基于推特用户Daniel进行二次开发<br>
+基于推特用户 @Daniel_eth2 的开源脚本进行功能的增加<br>
 原作Github: https://github.com/8hfq <br>
-二次开发作者推特：https://twitter.com/L4ttIc3 <br><br>
+二开作者推特：https://twitter.com/L4ttIc3 <br><br>
 新增功能List:
 - 测试网挖矿
 - 发送转账
