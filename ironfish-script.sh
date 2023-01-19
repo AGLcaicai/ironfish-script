@@ -64,28 +64,28 @@ mine_ironfish(){
 send_ironfish(){
     echo "发送转账请在节点同步完后进行,否则会提示错误"
     echo "流程请参考https://ironfish.network/docs/onboarding/send-receive-iron-fish-transactions"
-    docker exec -it node bash -c "ironfish accounts:pay"
+    docker exec -it node bash -c "ironfish wallet:send"
 }
 
 creat_ironfish(){
     echo "正在创建钱包"
-    docker exec -it node bash -c "ironfish accounts:create"
+    docker exec -it node bash -c "ironfish wallet:create"
     echo "新钱包创建成功，挖矿时请记得更改为你需要使用的钱包"
 }
 
 set_ironfish(){
     echo "正在导出所有的本地钱包名字↓"
-    docker exec -it node bash -c "ironfish accounts:list"
+    docker exec -it node bash -c "ironfish wallet:accounts"
     read -p " 请输入你想使用的钱包名字（如上）:" name
-    docker exec -it node bash -c "ironfish accounts:use ${name}"
+    docker exec -it node bash -c "ironfish wallet:use ${name}"
     echo "设置成功!挖矿和转账所使用的钱包已更改为 ${name}"
 }
 
 export_ironfish(){
     echo "正在导出所有的本地钱包名字↓"
-    docker exec -it node bash -c "ironfish accounts:list"
+    docker exec -it node bash -c "ironfish wallet:accounts"
     read -p " 请输入你想导出的钱包名字（如上）:" name
-    docker exec -it node bash -c "ironfish accounts:export ${name}"
+    docker exec -it node bash -c "ironfish wallet:export ${name}"
     echo "成功导出 ${name} 钱包,请备份"
 }
 
