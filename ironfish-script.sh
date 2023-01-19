@@ -123,6 +123,21 @@ update_ironfish(){
     echo "启动成功！升级完成"
 }
 
+mintAsset(){
+    echo "正在铸造资产...."
+    docker exec -it node bash -c "ironfish wallet:mint"
+}
+
+burnAsset(){
+    echo "正在燃烧资产...."
+    docker exec -it node bash -c "ironfish wallet:burn"
+}
+
+transferAsset(){
+    echo "正在转账资产到官方地址...."
+    docker exec -it node bash -c "ironfish wallet:send --to dfc2679369551e64e3950e06a88e68466e813c63b100283520045925adbe59ca"
+}
+
 echo && echo -e " ${Red_font_prefix}IronFish 一键脚本${Font_color_suffix} by \033[1;35mDaniel | Lattice\033[0m
 此脚本完全免费开源，由推特用户 ${Green_font_prefix}Daniel_eth2${Font_color_suffix} 开发，
 推特用户 ${Green_font_prefix}@L4ttIc3${Font_color_suffix} 二开并升级
@@ -147,8 +162,13 @@ echo && echo -e " ${Red_font_prefix}IronFish 一键脚本${Font_color_suffix} by
   -----其他功能------                    
  ${Green_font_prefix} 10.检查 Ironfish 状态 ${Font_color_suffix}
  ${Green_font_prefix} 11.升级 Ironfish 版本 ${Font_color_suffix}
+  -----第三阶段测试网功能------ 
+ ${Red_font_prefix}(以下功能建议在同步完节点后使用)${Font_color_suffix}
+ ${Green_font_prefix} 12.Mint An Asset 铸造资产${Font_color_suffix}
+ ${Green_font_prefix} 13.Burn An Asset 燃烧资产${Font_color_suffix}
+ ${Green_font_prefix} 14.Send An Asset 转账资产到官方地址${Font_color_suffix}
  ———————————————————————" && echo
-read -e -p " 请输入数字 [1-11]:" num
+read -e -p " 请输入数字 [1-14]:" num
 case "$num" in
 1)
     install_docker
@@ -183,6 +203,16 @@ case "$num" in
 11)
     update_ironfish
     ;;
+12)
+    mintAsset
+    ;;
+13)
+    burnAsset
+    ;;
+14)
+    transferAsset
+    ;;
+
 *)
     echo
     echo -e " ${Error} 请输入正确的数字"
