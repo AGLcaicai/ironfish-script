@@ -35,14 +35,14 @@ install_ironfish(){
     esac
     docker pull ghcr.io/iron-fish/ironfish:latest
     docker run -itd --name node --net host --volume /root/.node:/root/.ironfish ghcr.io/iron-fish/ironfish:latest start
-    sleep 10
+    sleep 5
     docker exec -it node bash -c "ironfish config:set blockGraffiti ${name}"
     docker exec -it node bash -c "ironfish config:set enableTelemetry true"
     echo "启动成功！"
 }
 
 run_ironfish(){
-    docker start $(docker ps -a | awk '{ print $1}' | tail -n +2)
+    docker start $(docker ps -a | grep node | awk '{ print $1}')
     echo "启动成功！"
     echo "请使用检查状态功能确保正常运行"
     echo "假如没正常启动，请运行命令 'docker ps -a 显示的CONTAINER ID' "
@@ -51,14 +51,14 @@ run_ironfish(){
 
 stop_ironfish(){
     docker exec -it node bash -c "ironfish stop"
-    sleep 10
+    sleep 5
     echo "停止成功！"
 }
 
 mine_ironfish(){
     echo "开始挖矿,此功能只能挂机请务关闭或退出"
     echo "需要退出请使用键盘按键 ctrl+c"
-    docker exec -it node bash -c "ironfish miners:start"
+    docker exec -itd node bash -c "ironfish miners:start"
 }
 
 send_ironfish(){
@@ -89,43 +89,44 @@ export_ironfish(){
     echo "成功导出 ${name} 钱包,请备份"
 }
 
+import_ironfish(){
+    echo "请输入导入的 钱包名字 和 spendingKey (这些信息在导出时提供)"
+    docker exec -it node bash -c "ironfish wallet:import"
+}
+
+balance_ironfish(){
+    echo "正在显示钱包余额,请确保节点已同步完成并领水...."
+    docker exec -it node bash -c "ironfish wallet:balance"
+}
+
+
 read_ironfish(){
-    echo "请检查状态"
-    docker exec -it node bash -c "ironfish config:show" | grep blockGraffiti 
-    docker exec -it node bash -c "ironfish config:show" | grep enableTelemetry
-    docker exec -it node bash -c "ironfish status"
+    echo "正在检查实时状态，如需退出请按 CTRL+C"
+    docker exec -it node bash -c "ironfish status -f"
 }
 
 update_ironfish(){
     echo "开始升级，请耐心等待"
+    docker exec -it node bash -c "ironfish stop"
     docker pull ghcr.io/iron-fish/ironfish:latest
-    docker stop node
-    docker rm node
-    rm -rf /root/.node
-    echo "重新配置"
-    read -p " 请输入节点名字（跟官方注册的一样）:" name
-    echo "你输入的节点名字是 $name"
-    read -r -p "请确认输入的节点名字正确，正确请输入Y，否则将退出 [Y/n] " input
-    case $input in
-        [yY][eE][sS]|[yY])
-            echo "继续安装"
-            ;;
-
-        *)
-            echo "退出安装..."
-            exit 1
-            ;;
-    esac
-    docker run -itd --name node --net host --volume /root/.node:/root/.ironfish ghcr.io/iron-fish/ironfish:latest start
-    sleep 10
-    docker exec -it node bash -c "ironfish config:set blockGraffiti ${name}"
-    docker exec -it node bash -c "ironfish config:set enableTelemetry true"
+    docker start $(docker ps -a | grep node | awk '{ print $1}')    
+    sleep 5
     echo "启动成功！升级完成"
+}
+
+faucet_ironfish(){
+    echo "请在下方输入注册账号的邮箱,领水需要排队"
+    echo "请过段时间和同步完节点的后再查询钱包余额"
+    docker exec -it node bash -c "ironfish faucet"
 }
 
 mintAsset(){
     echo "正在铸造资产...."
+    echo "Mint成功后就是链上资产，可以用于燃烧和转账到官方地址"
+    echo "下方asset name和metadata必须跟账号名字一样"
+    echo "mint amount比例是10000:0.00000001IRON,数值填写10000即可"
     docker exec -it node bash -c "ironfish wallet:mint"
+
 }
 
 burnAsset(){
@@ -159,16 +160,19 @@ echo && echo -e " ${Red_font_prefix}IronFish 一键脚本${Font_color_suffix} by
  ${Green_font_prefix} 7.创建 Ironfish 钱包 ${Font_color_suffix}
  ${Green_font_prefix} 8.设置 Ironfish 钱包 ${Font_color_suffix}
  ${Green_font_prefix} 9.导出 Ironfish 钱包 ${Font_color_suffix}
+ ${Green_font_prefix} 10.导入 Ironfish 钱包 ${Font_color_suffix}
+ ${Green_font_prefix} 11.查询 Ironfish 钱包余额 ${Font_color_suffix}
   -----其他功能------                    
- ${Green_font_prefix} 10.检查 Ironfish 状态 ${Font_color_suffix}
- ${Green_font_prefix} 11.升级 Ironfish 版本 ${Font_color_suffix}
+ ${Green_font_prefix} 12.检查 Ironfish 状态 ${Font_color_suffix}
+ ${Green_font_prefix} 13.升级 Ironfish 版本 ${Font_color_suffix}
+ ${Green_font_prefix} 14.请求 Ironfish 领水 ${Font_color_suffix}
   -----第三阶段测试网功能------ 
- ${Red_font_prefix}(以下功能建议在同步完节点后使用)${Font_color_suffix}
- ${Green_font_prefix} 12.Mint An Asset 铸造资产${Font_color_suffix}
- ${Green_font_prefix} 13.Burn An Asset 燃烧资产${Font_color_suffix}
- ${Green_font_prefix} 14.Send An Asset 转账资产到官方地址${Font_color_suffix}
+ ${Red_font_prefix}(以下必须在同步完节点和领水后使用)${Font_color_suffix}
+ ${Green_font_prefix} 15.Mint An Asset 铸造资产${Font_color_suffix}
+ ${Green_font_prefix} 16.Burn An Asset 燃烧资产${Font_color_suffix}
+ ${Green_font_prefix} 17.Send An Asset 转账资产到官方地址${Font_color_suffix}
  ———————————————————————" && echo
-read -e -p " 请输入数字 [1-14]:" num
+read -e -p " 请输入数字 [1-17]:" num
 case "$num" in
 1)
     install_docker
@@ -198,18 +202,27 @@ case "$num" in
     export_ironfish
     ;;
 10)
-    read_ironfish
+    import_ironfish
     ;;
 11)
-    update_ironfish
+    balance_ironfish
     ;;
 12)
-    mintAsset
+    read_ironfish
     ;;
 13)
-    burnAsset
+    update_ironfish
     ;;
 14)
+    faucet_ironfish
+    ;;
+15)
+    mintAsset
+    ;;
+16)
+    burnAsset
+    ;;
+17)
     transferAsset
     ;;
 
