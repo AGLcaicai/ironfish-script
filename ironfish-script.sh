@@ -139,10 +139,9 @@ transferAsset(){
     docker exec -it node bash -c "ironfish wallet:send --to dfc2679369551e64e3950e06a88e68466e813c63b100283520045925adbe59ca"
 }
 
-echo && echo -e " ${Red_font_prefix}IronFish 一键脚本${Font_color_suffix} by \033[1;35mDaniel | Lattice\033[0m
-此脚本完全免费开源，由推特用户 ${Green_font_prefix}Daniel_eth2${Font_color_suffix} 开发，
-推特用户 ${Green_font_prefix}@L4ttIc3${Font_color_suffix} 二开并升级
-升级增加 ${Red_font_prefix}测试网挖矿,发送转账,创建/设置/导出钱包${Font_color_suffix} 功能
+echo && echo -e " ${Red_font_prefix}IronFish 一键脚本${Font_color_suffix} by \033[1;35mLattice\033[0m
+此脚本完全免费开源，由推特用户 ${Green_font_prefix}@L4ttIc3${Font_color_suffix} 二次开发并升级，
+升级增加 ${Red_font_prefix}IronFish第三阶段测试网完整功能${Font_color_suffix} 功能
 欢迎关注，如有收费请勿上当受骗。
  ———————————————————————
  ${Green_font_prefix} 1.安装 docker ${Font_color_suffix}
