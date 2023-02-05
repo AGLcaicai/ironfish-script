@@ -107,10 +107,29 @@ read_ironfish(){
 
 update_ironfish(){
     echo "开始升级，请耐心等待"
-    docker exec -it node bash -c "ironfish stop"
-    docker pull ghcr.io/iron-fish/ironfish:latest
-    docker start $(docker ps -a | grep node | awk '{ print $1}')    
+    echo "请注意,更新之后老版本钱包将会无法导入(导出格式不同，意味着领的水也会丢失得重新领取),然后要重新同步节点"
     sleep 5
+    docker exec -it node bash -c "ironfish stop"
+    docker rm $(docker ps -a | grep node | awk '{ print $1}')
+    rm -rf .node/
+    read -p " 请输入节点名字（跟官方注册的一样）:" name
+    echo "你输入的节点名字是 $name"
+    read -r -p "请确认输入的节点名字正确，正确请输入Y，否则将退出 [Y/n] " input
+    case $input in
+        [yY][eE][sS]|[yY])
+            echo "继续更新"
+            ;;
+
+        *)
+            echo "退出更新..."
+            exit 1
+            ;;
+    esac
+    docker pull ghcr.io/iron-fish/ironfish:latest
+    docker run -itd --name node --net host --volume /root/.node:/root/.ironfish ghcr.io/iron-fish/ironfish:latest start
+    sleep 5
+    docker exec -it node bash -c "ironfish config:set blockGraffiti ${name}"
+    docker exec -it node bash -c "ironfish config:set enableTelemetry true"
     echo "启动成功！升级完成"
 }
 
